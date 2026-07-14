@@ -1,0 +1,122 @@
+# FlexPlus docker-compose.yml
+#
+# Services:
+#   scraper   — the headless Node.js scraper (production image)
+#   scraper-dev — development variant with hot-reload via tsx
+#
+# Usage:
+#   Production:  docker compose up scraper
+#   Development: docker compose up scraper-dev
+#   One-shot:    docker compose run --rm scraper
+
+services:
+
+  # ── Production scraper ───────────────────────────────────────────────────────
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: flexplus-scraper:latest
+    container_name: flexplus-scraper
+
+    # Load all env vars from .env (copy from .env.example first)
+    env_file:
+      - path: .env
+        required: true
+
+    # Override specific env vars for Docker context
+    environment:
+      NODE_ENV: production
+      PLAYWRIGHT_HEADLESS: "true"
+      # SQLite file inside the named volume
+      DATABASE_PATH: /app/data/flexplus.db
+
+    volumes:
+      # Persist SQLite database across container restarts
+      - flexplus-data:/app/data
+
+    # Playwright needs access to /dev/shm for Chromium shared memory.
+    # Without this, Chromium will crash inside the container.
+    shm_size: "512mb"
+
+    # Security hardening
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      # Required by Chromium sandbox
+      - SYS_ADMIN
+
+    command: ["node", "--experimental-sqlite", "dist/main.js", "daemon"]
+
+    restart: unless-stopped
+
+    # Resource limits — Chromium is memory-hungry
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "1.5G"
+        reservations:
+          cpus: "0.25"
+          memory: "512M"
+
+  # ── Development scraper (hot-reload) ─────────────────────────────────────────
+  scraper-dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Use the build stage (has devDependencies + tsx)
+      target: build
+    image: flexplus-scraper:dev
+    container_name: flexplus-scraper-dev
+
+    env_file:
+      - path: .env
+        required: false
+
+    environment:
+      NODE_ENV: development
+      PLAYWRIGHT_HEADLESS: "true"
+      DATABASE_PATH: /app/data/flexplus.db
+      LOG_LEVEL: debug
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+
+    volumes:
+      # Mount source for hot-reload (node_modules excluded via anonymous volume)
+      - ./src:/app/src
+      - /app/node_modules
+      # Persist dev DB
+      - flexplus-dev-data:/app/data
+
+    shm_size: "512mb"
+
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SYS_ADMIN
+
+    # Override CMD to use tsx watcher
+    command: ["node", "--experimental-sqlite", "node_modules/.bin/tsx", "watch", "src/main.ts"]
+
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "1.5G"
+
+volumes:
+  flexplus-data:
+    driver: local
+    labels:
+      com.flexplus.description: "Production SQLite database"
+
+  flexplus-dev-data:
+    driver: local
+    labels:
+      com.flexplus.description: "Development SQLite database"

@@ -1,0 +1,43 @@
+# ─── Dependencies ──────────────────────────────────────────────────────────
+node_modules/
+
+# ─── Build output ──────────────────────────────────────────────────────────
+dist/
+
+# ─── Database & Runtime data ───────────────────────────────────────────────
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# ─── Local secrets ─────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+
+# ─── Playwright ────────────────────────────────────────────────────────────
+playwright-browsers/
+test-results/
+playwright-report/
+
+# ─── Coverage ──────────────────────────────────────────────────────────────
+coverage/
+
+# ─── Logs ──────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── OS / IDE ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+.idea/
+
+# ─── TypeScript & Tooling ──────────────────────────────────────────────────
+*.tsbuildinfo
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

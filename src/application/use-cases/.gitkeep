@@ -1,0 +1,3 @@
+# Application use-cases will live here.
+# Each use case orchestrates domain ports to fulfil a single business operation.
+# Phase 2 will add: scrape-and-filter.use-case.ts

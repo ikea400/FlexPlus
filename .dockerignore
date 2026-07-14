@@ -1,0 +1,43 @@
+# FlexPlus .dockerignore
+# Exclude everything not needed in the Docker build context.
+# This keeps the context small and prevents secrets/dev files from leaking
+# into image layers.
+
+# ── Dev / local files ────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+node_modules/
+dist/
+
+# ── Data & runtime artefacts ─────────────────────────────────────────────────
+data/
+*.db
+*.db-shm
+*.db-wal
+logs/
+*.log
+
+# ── Playwright local browser cache (image downloads its own) ─────────────────
+playwright-browsers/
+test-results/
+playwright-report/
+
+# ── Coverage / tests ─────────────────────────────────────────────────────────
+coverage/
+
+# ── Git & CI ─────────────────────────────────────────────────────────────────
+.git/
+.github/
+.gitignore
+
+# ── Editor / OS ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+
+# ── Agents / docs ────────────────────────────────────────────────────────────
+.agents/
+*.md

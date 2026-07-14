@@ -1,0 +1,67 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel in-progress runs for the same branch on new pushes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Typecheck · Lint · Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ["22.x"]
+
+    steps:
+      # ── Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Node.js setup ─────────────────────────────────────────────────────
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      # ── Dependencies ──────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Type checking ─────────────────────────────────────────────────────
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      # ── Linting ───────────────────────────────────────────────────────────
+      - name: ESLint
+        run: npm run lint
+
+      # ── Unit tests ────────────────────────────────────────────────────────
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    name: Deploy to VM (Self-Hosted Runner)
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy local .env from VM
+        run: cp ~/.env.flexplus .env
+
+      - name: Start production container
+        run: |
+          docker compose down
+          docker compose up -d --build scraper

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-09T19:26:40Z",
+  "entries": [
+    "architecture-patterns",
+    "browser-automation",
+    "concise-planning",
+    "database-design",
+    "ddd-context-mapping",
+    "ddd-tactical-patterns",
+    "docker-expert",
+    "docs",
+    "domain-driven-design",
+    "email-systems",
+    "gemini-api-dev",
+    "gemini-api-integration",
+    "github-actions-templates",
+    "nodejs-backend-patterns",
+    "nodejs-best-practices",
+    "playwright-skill",
+    "sql-pro",
+    "systematic-debugging",
+    "typescript-expert"
+  ]
+}
