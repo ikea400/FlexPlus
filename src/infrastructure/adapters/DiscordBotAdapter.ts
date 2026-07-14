@@ -353,7 +353,9 @@ export class DiscordBotAdapter implements INotification {
 
   private async handleStatusCommand(message: { reply: (content: string) => Promise<unknown> }): Promise<void> {
     const statusText = this.botStatus.isRunning ? "🟢 En cours d'exécution (Scraping...)" : "💤 En veille (Attente du prochain run ou MFA)";
-    const lastRunText = this.botStatus.lastRunAt ? this.botStatus.lastRunAt.toLocaleString("fr-CA") : "Jamais";
+    const lastRunText = this.botStatus.lastRunAt
+      ? this.botStatus.lastRunAt.toLocaleString("fr-CA", { timeZone: "America/Montreal" })
+      : "Jamais";
     
     let authText = "⚪ Inconnu";
     if (this.botStatus.isAuthenticated === true) authText = "✅ Connecté (Cookie valide)";
