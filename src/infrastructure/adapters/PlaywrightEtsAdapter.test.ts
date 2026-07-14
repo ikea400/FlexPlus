@@ -85,6 +85,8 @@ describe("PlaywrightEtsAdapter Parser", () => {
     // Test that takeScreenshot returns a Buffer
     const screenshot = await adapter.takeScreenshot();
     expect(screenshot).toBeInstanceOf(Buffer);
-    expect(screenshot!.length).toBeGreaterThan(0);
+    if (screenshot) {
+      expect(screenshot.length).toBeGreaterThan(0);
+    }
   }, 30000);
 });

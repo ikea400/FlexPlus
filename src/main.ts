@@ -356,7 +356,18 @@ async function main(): Promise<void> {
       );
     });
 
-    let task: cron.ScheduledTask;
+    const task = cron.schedule(scraperCron, async () => {
+      if (jitterMaxSec > jitterMinSec) {
+        const delaySeconds = Math.floor(
+          jitterMinSec + Math.random() * (jitterMaxSec - jitterMinSec + 1),
+        );
+        console.log(
+          `[FlexPlus] Cron triggered. Delaying run by ${delaySeconds} seconds for humanisation...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
+      }
+      await runScrapeJob(useCase, bot);
+    });
 
     bot.onStopCommand(() => {
       console.log("[FlexPlus] Received stop command. Suspending cron task...");
@@ -371,19 +382,6 @@ async function main(): Promise<void> {
     });
 
     await runScrapeJob(useCase, bot);
-
-    task = cron.schedule(scraperCron, async () => {
-      if (jitterMaxSec > jitterMinSec) {
-        const delaySeconds = Math.floor(
-          jitterMinSec + Math.random() * (jitterMaxSec - jitterMinSec + 1),
-        );
-        console.log(
-          `[FlexPlus] Cron triggered. Delaying run by ${delaySeconds} seconds for humanisation...`,
-        );
-        await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
-      }
-      await runScrapeJob(useCase, bot);
-    });
 
     task.start();
   } else {
