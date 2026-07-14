@@ -126,6 +126,7 @@ We recommend running this service via Docker to avoid OS-level Playwright and de
    | [`AUTO_APPLY`](#auto_apply) | Optional | `false` | Automatically submit postulations for high-scoring offers (RISKY). |
    | [`LOG_LEVEL`](#log_level) | Optional | `info` | Logs level filters: `error`, `warn`, `info`, or `debug`. |
    | [`NODE_ENV`](#node_env) | Optional | `development` | Node environment config: `development` or `production`. |
+   | [`TZ`](#tz) | Optional | `America/Montreal` | Timezone code configured for the container OS and scheduling tasks. |
 
    ---
 
@@ -158,6 +159,7 @@ We recommend running this service via Docker to avoid OS-level Playwright and de
 
    #### Scheduler & Humanisation
    - **`SCRAPER_CRON`**: Cron syntax (`* * * * *`). The default is run every 6 hours. For humanisation, `.env.example` sets it to run every 20 minutes from 8am to 5pm (`*/20 8-17 * * 1-5`).
+   - **`TZ`**: Sets the default system timezone of the Node process and Docker container. Useful to align cron patterns to local time instead of UTC.
    - **Jitter Settings**: Delay cron jobs randomly using `SCRAPER_JITTER_MIN_SEC` and `SCRAPER_JITTER_MAX_SEC` to prevent the scraper from executing exactly on the 20-minute mark (which is a signature bot behavior).
 
    #### Playwright Caching & Auto-Apply

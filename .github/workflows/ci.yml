@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Set default timezone for the runner environment
+env:
+  TZ: America/Montreal
+
 # Cancel in-progress runs for the same branch on new pushes
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

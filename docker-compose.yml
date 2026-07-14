@@ -31,6 +31,7 @@ services:
       PLAYWRIGHT_HEADLESS: "true"
       # SQLite file inside the named volume
       DATABASE_PATH: /app/data/flexplus.db
+      TZ: America/Montreal
 
     volumes:
       # Persist SQLite database across container restarts
@@ -84,6 +85,7 @@ services:
       DATABASE_PATH: /app/data/flexplus.db
       LOG_LEVEL: debug
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      TZ: America/Montreal
 
     volumes:
       # Mount source for hot-reload (node_modules excluded via anonymous volume)
