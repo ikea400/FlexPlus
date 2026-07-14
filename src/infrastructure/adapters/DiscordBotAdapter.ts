@@ -71,10 +71,13 @@ export class DiscordBotAdapter implements INotification {
     lastRunAt: undefined as Date | undefined,
     lastError: null as string | null,
     isAuthenticated: null as boolean | null,
+    isSuspended: false,
   };
 
   /** Callback and cooldown for manual !auth command */
   private authCommandCallback?: (forceAuth: boolean, skipScrape: boolean) => void;
+  private stopCommandCallback?: () => void;
+  private startCommandCallback?: () => void;
   private lastAuthTime = 0;
   
   /** Stores the last MFA code message sent to react to it upon success */
@@ -116,6 +119,10 @@ export class DiscordBotAdapter implements INotification {
         void this.handleStatusCommand(message);
       } else if (content === "!auth" || content === "!run") {
         void this.handleAuthCommand(message);
+      } else if (content === "!stop") {
+        void this.handleStopCommand(message);
+      } else if (content === "!start") {
+        void this.handleStartCommand(message);
       } else if (content === "!help") {
         void this.handleHelpCommand(message);
       }
@@ -143,6 +150,20 @@ export class DiscordBotAdapter implements INotification {
    */
   onAuthCommand(callback: (forceAuth: boolean, skipScrape: boolean) => void): void {
     this.authCommandCallback = callback;
+  }
+
+  /**
+   * Register a callback to be invoked when the !stop command is received.
+   */
+  onStopCommand(callback: () => void): void {
+    this.stopCommandCallback = callback;
+  }
+
+  /**
+   * Register a callback to be invoked when the !start command is received.
+   */
+  onStartCommand(callback: () => void): void {
+    this.startCommandCallback = callback;
   }
 
   /**
@@ -317,21 +338,32 @@ export class DiscordBotAdapter implements INotification {
 
   // ─── INotification: updateStatus ───────────────────────────────────────────
 
-  updateStatus(status: { isRunning?: boolean, lastRunAt?: Date, lastError?: string | null, isAuthenticated?: boolean | null }): void {
+  updateStatus(status: { isRunning?: boolean, lastRunAt?: Date, lastError?: string | null, isAuthenticated?: boolean | null, isSuspended?: boolean }): void {
     if (status.isRunning !== undefined) this.botStatus.isRunning = status.isRunning;
     if (status.lastRunAt !== undefined) this.botStatus.lastRunAt = status.lastRunAt;
     if (status.lastError !== undefined) this.botStatus.lastError = status.lastError;
     if (status.isAuthenticated !== undefined) this.botStatus.isAuthenticated = status.isAuthenticated;
+    if (status.isSuspended !== undefined) this.botStatus.isSuspended = status.isSuspended;
   }
 
   // ─── INotification: sendError ──────────────────────────────────────────────
 
-  async sendError(message: string): Promise<void> {
+  async sendError(message: string, screenshot?: Buffer): Promise<void> {
     try {
       const channel = await this.getChannel();
       const ping = this.config.importantTag ? `${this.config.importantTag} ` : "";
+
+      const files = [];
+      if (screenshot) {
+        files.push({
+          attachment: screenshot,
+          name: "screenshot.png",
+        });
+      }
+
       await channel.send({
         content: `${ping}🚨 **Alerte FlexPlus:**\n${message}`,
+        files,
       });
     } catch (err) {
       console.error("[DiscordBotAdapter] Failed to send error message to Discord:", err);
@@ -352,7 +384,10 @@ export class DiscordBotAdapter implements INotification {
   // ─── Private: message command handler ──────────────────────────────────────
 
   private async handleStatusCommand(message: { reply: (content: string) => Promise<unknown> }): Promise<void> {
-    const statusText = this.botStatus.isRunning ? "🟢 En cours d'exécution (Scraping...)" : "💤 En veille (Attente du prochain run ou MFA)";
+    let statusText = this.botStatus.isRunning ? "🟢 En cours d'exécution (Scraping...)" : "💤 En veille (Attente du prochain run ou MFA)";
+    if (this.botStatus.isSuspended) {
+      statusText = "⏸️ Suspendu (Le cron job est arrêté)";
+    }
     const lastRunText = this.botStatus.lastRunAt
       ? this.botStatus.lastRunAt.toLocaleString("fr-CA", { timeZone: "America/Montreal" })
       : "Jamais";
@@ -378,9 +413,39 @@ export class DiscordBotAdapter implements INotification {
       "• `!status` : Affiche l'état actuel du scraper (en cours, en veille, dernière erreur) et l'état de la connexion ETS.\n" +
       "• `!run` : Démarre manuellement un cycle de scraping sans attendre le prochain déclenchement.\n" +
       "• `!auth` : Force la ré-authentification (efface les cookies et relance le processus MFA).\n" +
+      "• `!stop` : Suspend temporairement le cron job automatique.\n" +
+      "• `!start` : Réactive le cron job automatique suspendu.\n" +
       "• `!help` : Affiche ce message d'aide.";
     
     await message.reply(helpText).catch(() => {});
+  }
+
+  private async handleStopCommand(message: { reply: (content: string) => Promise<unknown> }): Promise<void> {
+    if (!this.stopCommandCallback) {
+      await message.reply("⚠️ La commande n'est pas disponible dans ce mode (uniquement disponible en mode daemon).").catch(() => {});
+      return;
+    }
+    try {
+      this.stopCommandCallback();
+      await message.reply("⏸️ **Scraper suspendu.** Le cron job automatique est arrêté.").catch(() => {});
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await message.reply(`❌ Erreur lors de la suspension: ${msg}`).catch(() => {});
+    }
+  }
+
+  private async handleStartCommand(message: { reply: (content: string) => Promise<unknown> }): Promise<void> {
+    if (!this.startCommandCallback) {
+      await message.reply("⚠️ La commande n'est pas disponible dans ce mode (uniquement disponible en mode daemon).").catch(() => {});
+      return;
+    }
+    try {
+      this.startCommandCallback();
+      await message.reply("▶️ **Scraper démarré.** Le cron job automatique est réactivé.").catch(() => {});
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await message.reply(`❌ Erreur lors du démarrage: ${msg}`).catch(() => {});
+    }
   }
 
   private async handleAuthCommand(message: { reply: (content: string) => Promise<unknown>, content: string }): Promise<void> {

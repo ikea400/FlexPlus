@@ -223,11 +223,18 @@ async function runScrapeJob(
       !err.message.includes("Authentication failed")
     ) {
       let siteIsDown = false;
+      let screenshot: Buffer | null = null;
       if (scraperAdapter) {
         try {
           siteIsDown = await scraperAdapter.isSiteDown();
+          if (!siteIsDown) {
+            screenshot = await scraperAdapter.takeScreenshot();
+          }
         } catch (checkErr) {
-          console.error("[FlexPlus] Failed to check if site is down:", checkErr);
+          console.error(
+            "[FlexPlus] Failed to check status/take screenshot:",
+            checkErr,
+          );
         }
       }
 
@@ -241,6 +248,7 @@ async function runScrapeJob(
         await bot
           .sendError(
             `🚨 **Erreur critique du scraper:**\n\`\`\`text\n${errorMsg}\n\`\`\``,
+            screenshot || undefined,
           )
           .catch(() => {});
       }
@@ -348,9 +356,23 @@ async function main(): Promise<void> {
       );
     });
 
+    let task: cron.ScheduledTask;
+
+    bot.onStopCommand(() => {
+      console.log("[FlexPlus] Received stop command. Suspending cron task...");
+      task.stop();
+      bot.updateStatus({ isSuspended: true });
+    });
+
+    bot.onStartCommand(() => {
+      console.log("[FlexPlus] Received start command. Resuming cron task...");
+      task.start();
+      bot.updateStatus({ isSuspended: false });
+    });
+
     await runScrapeJob(useCase, bot);
 
-    const task = cron.schedule(scraperCron, async () => {
+    task = cron.schedule(scraperCron, async () => {
       if (jitterMaxSec > jitterMinSec) {
         const delaySeconds = Math.floor(
           jitterMinSec + Math.random() * (jitterMaxSec - jitterMinSec + 1),

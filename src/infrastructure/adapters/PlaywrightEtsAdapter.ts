@@ -874,6 +874,18 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
     }
   }
 
+  // ─── IEtsScraper: takeScreenshot ───────────────────────────────────────────
+
+  async takeScreenshot(): Promise<Buffer | null> {
+    if (!this.page) return null;
+    try {
+      return await this.page.screenshot({ type: "png" });
+    } catch (err) {
+      console.error("[PlaywrightEtsAdapter] Failed to take screenshot:", err);
+      return null;
+    }
+  }
+
   // ─── IEtsScraper: dispose ──────────────────────────────────────────────────
 
   async dispose(): Promise<void> {

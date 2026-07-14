@@ -81,5 +81,10 @@ describe("PlaywrightEtsAdapter Parser", () => {
     await adapter.getPosteDetail(inaccessibleUrl).catch(() => {});
     const siteIsDownInaccessible = await adapter.isSiteDown();
     expect(siteIsDownInaccessible).toBe(true);
+
+    // Test that takeScreenshot returns a Buffer
+    const screenshot = await adapter.takeScreenshot();
+    expect(screenshot).toBeInstanceOf(Buffer);
+    expect(screenshot!.length).toBeGreaterThan(0);
   }, 30000);
 });

@@ -296,6 +296,11 @@ export interface IEtsScraper {
   isSiteDown(): Promise<boolean>;
 
   /**
+   * Captures a screenshot of the current page.
+   */
+  takeScreenshot(): Promise<Buffer | null>;
+
+  /**
    * Releases browser resources. Must be called in a finally block.
    */
   dispose(): Promise<void>;

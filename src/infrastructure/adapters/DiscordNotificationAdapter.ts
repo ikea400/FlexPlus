@@ -194,7 +194,7 @@ export class DiscordNotificationAdapter implements INotification {
   waitForMfaReady(_timeoutMs?: number): Promise<void> { return Promise.resolve(); }
 
   /** @deprecated Use DiscordBotAdapter. Stub to satisfy INotification. */
-  sendError(_message: string): Promise<void> { return Promise.resolve(); }
+  sendError(_message: string, _screenshot?: Buffer): Promise<void> { return Promise.resolve(); }
 
   /** @deprecated Use DiscordBotAdapter. Stub to satisfy INotification. */
   markMfaSuccess(): Promise<void> { return Promise.resolve(); }
@@ -205,6 +205,7 @@ export class DiscordNotificationAdapter implements INotification {
     lastRunAt?: Date;
     lastError?: string | null;
     isAuthenticated?: boolean | null;
+    isSuspended?: boolean;
   }): void {
     // Stub
   }

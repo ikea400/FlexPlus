@@ -113,7 +113,7 @@ export interface INotification {
   /**
    * Sends an error alert to the user.
    */
-  sendError(message: string): Promise<void>;
+  sendError(message: string, screenshot?: Buffer): Promise<void>;
 
   /**
    * Marks the previously sent MFA code message as successfully completed
@@ -124,6 +124,6 @@ export interface INotification {
   /**
    * Updates the internal status of the notification adapter (e.g. for a !status command).
    */
-  updateStatus(status: { isRunning?: boolean, lastRunAt?: Date, lastError?: string | null, isAuthenticated?: boolean | null }): void;
+  updateStatus(status: { isRunning?: boolean, lastRunAt?: Date, lastError?: string | null, isAuthenticated?: boolean | null, isSuspended?: boolean }): void;
 }
 
