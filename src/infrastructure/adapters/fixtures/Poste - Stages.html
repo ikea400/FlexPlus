@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)https://see.etsmtl.ca/Poste/b1c28030-9fbf-4002-a78c-b4810145f8a7 -->
+<html lang="fr" antidoteapi_jsconnect="true" class=" js no-flexbox flexbox-legacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths" style=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="google" value="notranslate">
+    <title>
+Poste - Stages
+    </title>
+
+    <link href="https://see.etsmtl.ca/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <meta name="viewport" content="width=device-width">
+    <link href="./Poste - Stages_files/css" rel="stylesheet">
+
+    <link href="./Poste - Stages_files/css(1)" rel="stylesheet">
+
+    <script src="./Poste - Stages_files/jquery"></script>
+
+    <script src="./Poste - Stages_files/jqueryui"></script>
+
+    <script src="./Poste - Stages_files/modernizr"></script>
+
+
+    <script src="./Poste - Stages_files/gasp"></script>
+
+    <link href="./Poste - Stages_files/jqueryplugins" rel="stylesheet">
+
+    <script src="./Poste - Stages_files/jqueryplugins(1)"></script>
+
+
+    <script src="./Poste - Stages_files/infragistics-fr.js.téléchargement"></script>
+    <script src="./Poste - Stages_files/infragistics.core.js.téléchargement"></script>
+    <script src="./Poste - Stages_files/infragistics.lob.js.téléchargement"></script>
+    <script src="./Poste - Stages_files/infragistics.loader.js.téléchargement"></script>
+    <script type="text/javascript" src="./Poste - Stages_files/gasp-recherchefiltre.js.téléchargement"></script>
+
+    
+    <script type="text/javascript">
+        function redirectRemiseCotes() {
+            window.location = "../RemiseCotes";
+        }
+
+        $(document).ready(function () {
+            $("#frameGoogleMap").height($(".divInfo")[0].scrollHeight - 10);
+        });
+
+        $('html').on('click', '#afficheDirectiveGag', function (e) {
+            var guidpost = $('#guidPostGagnant').text()
+            var codeperm = $('#codePermGagnant').text();
+
+            $.ajax({
+                type: "POST",
+                url: "/Accueil/SetDateVisionnementDirectives",
+                data: AddAntiForgeryToken("#SetDateVisionnementDirectivesForm", {
+                    guidPoste: guidpost
+                }),
+                dataType: "text",
+                success: function (data) {
+                    $('#directGag').html($('#directGag').html() + data);
+                    $('#afficheDirectiveGag').remove();
+                }
+            });
+        });
+
+        function confirmationExlusion() {
+            var dialogName = 'confirmationExclusion';
+            if ($('#' + dialogName).length == 0) {
+                $('body').append('<div id="' + dialogName + '" class="ddDivs"><p>Vous êtes sur le point d\'enlever le poste actuel de votre liste d\'affichage de manière permanente. Continuer l\'opération?</p></div>');
+            }
+
+            $('#' + dialogName).dialog({
+                resizable: false,
+                modal: true,
+                title: 'Attention',
+                buttons: {
+                    "Oui": function () {
+                        $("#formExclusion").submit();
+                        $(this).dialog("close");
+                    },
+                    "Non": function () {
+                        $(this).dialog("close");
+                    },
+
+                }
+            });
+
+        }
+        $('html').on('click', '#historiqueDesSuivis', function (e) {
+            $("#relancesTable").toggle("slow");
+            if ($("#historiqueDesSuivis").text() == "+")
+                $("#historiqueDesSuivis").text("-")
+            else
+                $("#historiqueDesSuivis").text("+")
+        })
+    </script>
+
+    <link href="./Poste - Stages_files/PagesPrint.css" rel="stylesheet" type="text/css" media="print">
+    <script src="./Poste - Stages_files/jquery.ba-hashchange.min.js.téléchargement"></script>
+
+
+
+    <!--[if lt IE 9]>
+	        <link href="/content/ie8.css" rel="stylesheet" type="text/css" />
+        <![endif]-->
+</head>
+
+<body>
+    <header>
+        <div id="etsHeaderContainer">
+            <div id="etsheader">
+                <div style="position: relative; height: 48px;">
+                    <img style="border-width: 0px; height: 48px;" src="./Poste - Stages_files/ETS-web-blanc-transparent.png" alt="ETS" id="ctl00_Image1">
+                    <div style="position: absolute; right: 0pt; bottom: 5px;">
+<a class="lienDeconnexion" href="https://see.etsmtl.ca/Authentification/Deconnexion">Déconnexion</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="etsBellowHeader">
+        <div id="etspage">
+            <div id="etsMCContainer" class="clearfix">
+                <div id="etsMCTop">
+                    <div class="wgFr">
+
+Etudiant&nbsp;Test
+                    </div>
+                    &nbsp;
+                </div>
+
+                
+                    <div class="MenuTop" id="MenuTop">
+                        <ul>
+                            <li><a href="https://see.etsmtl.ca/Accueil">Accueil</a></li>
+                            <li><a href="https://see.etsmtl.ca/Postes/Affichages">Affichages</a></li>
+
+
+                                <li><a href="https://see.etsmtl.ca/SuiviPostulations">Suivi des postulations</a></li>
+                                <li><a href="https://see.etsmtl.ca/ConventionDeStage">Convention de stage</a></li>
+                                <li><a href="https://see.etsmtl.ca/RapportStage?modeCorrection=False">Rapport de stage</a></li>
+
+                            <li><a href="https://see.etsmtl.ca/ActivitesStagesEmplois">Réseautage et stages par contact direct</a></li>
+                            
+
+                                <li><a href="https://see.etsmtl.ca/Documentation">Documentation</a></li>
+
+
+                        </ul>
+                    </div>
+                <div id="etsMCTwoRight">
+                    <div id="etsMCHeader">
+                    </div>
+                    <div id="etsMCContent">
+                        <section class="content-wrapper main-content clear-fix">
+                            
+
+
+
+
+<form action="https://see.etsmtl.ca/Accueil/SetDateVisionnementDirectives" id="SetDateVisionnementDirectivesForm" method="get" novalidate="novalidate"><input name="__RequestVerificationToken" type="hidden" value="rqg_tL8acgxg7JxehrS-PHEjK8ilLAEGA_tat0voW-BI7ie12y6d0BzIHFIKwZUseYGKKEQKBVFgnzgcni7deHvryJJs-6-SUI_Gqedg3akR0rWHPDlO6Q4VJ5gptnrN-GyKdj1zs7kBcC6MpWaqtrbn-QE1"></form>
+<div>
+    <h2 style="float:left;">
+        Description du stage
+        <span id="spanTitreEmploiStage">
+            20263TEST001
+        </span>
+    </h2>
+<form action="https://see.etsmtl.ca/Poste/b1c28030-9fbf-4002-a78c-b4810145f8a7/favoriPoste?type=FAVORIS" method="post" novalidate="novalidate"><input name="__RequestVerificationToken" type="hidden" value="BIMjIjstG69Or_CdfetGu2j0gra0ETq8DJn5pNpDqAdyWEG6OPzg9bMWapCN-o7M9GDJEoLSVWN2Mebxo34iZizqb8EviUhRmjyANoDXuXDL0lKjdjYYmw4TmLPWO98GyQZjcAxoMdrpCsAmJkg-cJ7_JtY1">        <div style="float:right;">
+                <button type="submit" class="boutonsPost">Ajouter aux favoris</button>
+        </div>
+</form></div>
+
+<form action="https://see.etsmtl.ca/Poste/b1c28030-9fbf-4002-a78c-b4810145f8a7/favoriPoste?type=EXCLURE" id="formExclusion" method="post" novalidate="novalidate"><input name="__RequestVerificationToken" type="hidden" value="wZu4oSFNXmeSH8oMv9YxC6o5J3Pe_Oyw15FKu0WBWf3-7AjZBfGsy2M2dSndiCtx_cUa7dr1C_LAJl2nzz21VSPYXBpFuSYvqEMU2oKRvFjPUyULxHb6joTytNCvI1kRFZ0Ll_y9leWmMOUi8GOUM6JVqv81">    <div style="float:right;margin-right:20px">
+            <button type="button" onclick="confirmationExlusion()" class="boutonsPost">Exclure ce poste</button>
+    </div>
+</form>
+<div style="clear:both"></div>
+        <div class="messageAlerte" id="alertBox">
+            
+<form action="https://see.etsmtl.ca/Postulation" class="simpleForm" method="post" novalidate="novalidate"><input name="__RequestVerificationToken" type="hidden" value="FcsGvpLSVki_7xuGstkHUeZ4e2yhT5GyldIWBAkEKAdCgwpHPztmodbvNi49O74H6bDjLqLbBw-ZzrbYB1PSd-z7XbLhGFESZMhvw4MQj1cuJrT8R3i9CbSxZoLD0gOvdVjj0O-Xd9yE1zRhxW2JuFnqFcU1"><input id="Poste_Guid" name="Poste.Guid" type="hidden" value="b1c28030-9fbf-4002-a78c-b4810145f8a7">                                    <p>Si ce poste vous intéresse, cliquez ici pour <input class="boutonsPost" id="Postuler" name="Postuler" type="submit" value="Postuler"></p>
+</form>        </div>
+        <div class="divInfo">
+
+
+
+            <fieldset>
+                <legend>Informations sur le stage</legend>
+
+                    <div style="float:left;width:100%;">
+                        <div style="float:left;width:50%;">
+                            <div class="ligneInfo">
+                                <div>Début de l'affichage:</div>
+                                    <div>
+08-07-2026 15:39</div>
+
+                            </div>
+                            <div class="ligneInfo">
+                                <div>Entreprise:</div>
+                                <div id="divNomEmployeur">ENTREPRISE DE TEST INC.</div>
+                            </div>
+                            <div class="ligneInfo">
+                                <div>Lieu:</div>
+                                <div><a href="http://maps.google.com/maps?z=18&amp;q=J6E2W5,Canada" target="_blank">Joliette</a></div>
+                            </div>
+                                    <div class="ligneInfo">
+                                        <div>Stage hors Québec: </div>
+                                        <div>
+                                                <span>Non</span>
+                                        </div>
+                                    </div>
+                                <div class="ligneInfo">
+                                    <div>Stage en développement durable: </div>
+                                    <div>
+                                            <span>Non</span>
+                                    </div>
+                                </div>
+                                <div class="ligneInfo">
+                                    <div>Stage avec bourse: </div>
+                                    <div>
+                                            <span>Non</span>
+                                    </div>
+                                </div>
+                                <div class="ligneInfo">
+                                    <div>Stage en technologie de la santé: </div>
+                                    <div>
+                                            <span>Non</span>
+                                    </div>
+                                </div>
+                                <div class="ligneInfo">
+                                    <div>Stage Flex+: </div>
+                                    <div>
+                                            <span>Non</span>
+                                    </div>
+                                </div>
+                                <div class="ligneInfo">
+                                    <div>Session du stage: </div>
+                                    <div>
+                                            <span>Automne</span>
+                                    </div>
+                                </div>
+                                                            <div class="ligneInfo">
+                                    <div>Durée du poste:</div>
+                                        <div>4 mois</div>
+                                </div>
+
+                            <div class="ligneInfo">
+                                    <div>Nombre de stagiaires:</div>
+                                <div>1</div>
+                            </div>
+
+                            <div class="ligneInfo">
+                                <div>Langue du CV:</div>
+                                <div>Strictement en français</div>
+                            </div>
+
+                                <div class="ligneInfo">
+                                    <div>Questions:</div>
+                                    <div>
+
+                                        <a href="mailto:coordonnateur.test@etsmtl.ca?subject=Question%20sur%20le%20poste:%2020263TEST001%20(TEST00000000)">Des questions sur le poste?</a>
+                                    </div>
+                                </div>
+                                <div class="ligneInfo">
+                                    <div>Coordonnateur:</div>
+                                    <div>
+
+
+                                        <a href="mailto:coordonnateur.test@etsmtl.ca?subject=Question%20sur%20le%20poste:%2020263TEST001%20(TEST00000000)">Coordonnateur Test</a>
+                                    </div>
+                                </div>
+                        </div>
+                        <div style="float:right;width:50%;">
+                                <div class="ligneInfo">
+                                    <div>Taux horaire: </div>
+                                    <div>24$ à 29$</div>
+                                </div>
+                            <div class="ligneInfo">
+                            </div>
+                            <div class="ligneInfo">
+                            </div>
+                            <div class="ligneInfo">
+                            </div>
+                            <div class="ligneInfo">
+                            </div>
+                            <div class="ligneInfo">
+                            </div>
+                            <div class="ligneInfo">
+                                    <div>Enquête de sécurité: </div>
+                                    <div>Oui</div>
+                            </div>
+                            <div class="ligneInfo">
+                            </div>
+                            <div class="ligneInfo">
+                            </div>
+                        </div>
+                        <div style="float:left;width:100%;">
+                            <div class="noFloatDiv">
+                                <div>Offert dans les départements et niveaux suivants:</div>
+                                <div>
+                                    <ul>
+                                            <li>GÉNIE LOGICIEL(S1,S2)</li>
+                                            <li>GÉNIE TECH. DE L'INFORMATION(S1,S2)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+            </fieldset>
+        </div>
+        <h3>Description du stage:</h3>
+        <div class="divBoiteBleu">
+            <blockquote>
+<p>L’option <strong>Flex+</strong> étant maintenant en vigueur, <strong>l’employeur peut vous contacter directement pour planifier une entrevue. Vous devrez alors gérer votre agenda de façon autonome.</strong></p>
+
+<p><strong>Si vous êtes contacté (e) directement pour une entrevue, veuillez l'inscrire dans vos non-disponibilités, dans votre ePortfolio</strong>. On évitera ainsi tout potentiel conflit d'horaire.</p>
+
+<p><em>À noter que les entrevues planifiées par Stages ÉTS sont prioritaires si vos entrevues Flex+ ne nous ont pas été communiquées.</em></p>
+</blockquote>
+
+<p>&nbsp;</p>
+
+<p><strong>Description de l'entreprise</strong></p>
+
+<p><strong>5 raisons de faire son stage&nbsp;chez EntrepriseTest:</strong></p>
+
+<ol>
+	<li>Travailler sur des technologies de pointe et des architectures modernes</li>
+	<li>Intégrer une équipe dynamique et collaborative</li>
+	<li>Participer à des projets d'envergure internationale</li>
+	<li>Bénéficier d'un mentorat de qualité avec des développeurs expérimentés</li>
+	<li>Développer vos compétences techniques et professionnelles au quotidien</li>
+</ol>
+
+<p><strong>Description du stage</strong></p>
+
+<p><strong>Responsabilités</strong></p>
+
+<ul>
+	<li>Participer au développement et à la conception d'applications de test;</li>
+	<li>Collaborer activement avec l'équipe de développement logiciel;</li>
+	<li>Rédiger du code propre, documenté et testé de manière automatisée;</li>
+	<li>Participer aux revues de code et aux rituels agiles;</li>
+	<li>Aider à l'investigation et à la résolution de bogues;</li>
+	<li>Contribuer à l'amélioration continue des processus de déploiement.</li>
+</ul>
+
+<p><strong>Profil</strong></p>
+
+<ul>
+	<li>Connaissance pratique de TypeScript et de Node.js;</li>
+	<li>Bonne compréhension des bases de données SQL et relationnelles;</li>
+	<li>Expérience avec l'utilisation de Git et le travail collaboratif sur GitHub;</li>
+	<li>Capacité à communiquer efficacement en équipe;</li>
+	<li>Curiosité technique et volonté d'apprendre de nouvelles technologies.</li>
+</ul>
+
+<p><strong>Conditions de travail</strong></p>
+
+<ul>
+	<li>Stage pour la session automne;</li>
+	<li>Horaire flexible de 37.5 heures par semaine;</li>
+	<li>Environnement de travail hybride (télétravail et présentiel);</li>
+	<li>Équipement de travail fourni par l'entreprise;</li>
+	<li>Activités d'équipe régulières et ambiance de travail stimulante.</li>
+</ul>
+
+<p>**Nous souscrivons au principe de l'égalité en emploi. Le genre masculin est utilisé sans discrimination dans ce texte.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Stage pour la session automne</strong> - Le stagiaire participera activement au développement et à l'assurance qualité des différents modules applicatifs.</p>
+
+        </div>
+            <div class="divInfo">
+                <fieldset>
+                    <legend>Informations sur l'entreprise</legend>
+
+                    <div>
+
+
+
+                        <div class="ligneInfo">
+                            <div>Entreprise:</div>
+                            <div>ENTREPRISE DE TEST INC.</div>
+                        </div>
+                        <div class="ligneInfo">
+                            <div>Site web:</div>
+
+                                <div><a href="http://www.entreprisetest.ca/" target="_blank">http://www.entreprisetest.ca</a></div>
+
+                        </div>
+                            <div class="ligneInfo">
+                            </div>
+
+                        <div class="ligneInfo">
+                            <div>Type d'entreprise:</div>
+                            <div>Grande / Multi Nationale</div>
+                        </div>
+
+                        <div class="ligneInfo">
+                            <div><label for="Startup_Centech">Startup Centech</label></div>
+                            <div>
+                                    <span>Non</span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <h3>Mission</h3>
+            <div class="divBoiteBleu">
+                <p><strong>Mission :</strong></p>
+
+<p>EntrepriseTest Canada inc. est une filiale de EntrepriseTest Corporation, la plus importante entreprise de pneus et de produits de caoutchouc au monde, dont le siège social est situé à Tokyo au Japon. L'usine de Joliette est spécialisée dans la fabrication de pneus haute performance pour voiture, camionnette et véhicule utilitaire.</p>
+
+<p>Avec 1400 employés, l’usine de Joliette produit plus de 19 000 pneus par jour! Mouvel entrepôt automatisé, nouvelles machines à la pointe de la technologie, virage 4.0 ! Parmi les usines les plus vertes du Groupe EntrepriseTest, notre usine de Joliette est fière d’innover constamment pour assurer un environnement sain pour les générations futures.</p>
+
+<p><strong>Site Web :</strong> <a href="https://can01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.entreprisetest.com%2F&amp;data=05%7C01%7Cemploye.test%40etsmtl.ca%7C79348ed8eb1845bce0ba08dbd6781457%7C70aae3b79f3b484d8f9549e8fbb783c0%7C0%7C0%7C638339583444730930%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=67qzWNebiUPNx3IBfm08Bx%2BdOQkw6ymvD68CuVhrsLk%3D&amp;reserved=0">https://www.entreprisetest.com/</a></p>
+
+            </div>
+            <div class="divContainerH2Second">
+                <h2 class="h2Second">Liste des candidats</h2>
+                <div class="h2Ligne"></div>
+            </div>
+            <div>
+                <div><span>Nombre de postulants: 24</span></div>
+            </div>
+                <br>
+                <div id="divTableRemiseCotes">
+                    <table class="tableCandidats" id="tableCandidats">
+                        <thead>
+                            <tr class="titreTablesCandidatsCotes">
+                                <th>
+                                    <div>Nom</div>
+                                </th>
+                                <th>
+                                    <div>Statut</div>
+                                </th>
+                                    <th>
+                                        <div>Entrevue</div>
+                                    </th>
+                                    <th>
+                                        <div>Gagnant sur</div>
+                                    </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                            <tr class="footTablesCandidatsCotes">
+                                <td colspan="4" style="text-align: right;">
+                                    <div id="conteneurFooter"></div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+<div style="text-align:justify;margin-left:auto;margin-right:auto;width:50%">  <p>Les sites Web de l’ÉTS peuvent contenir des liens vers d’autres sites. L’ÉTS n’est responsable ni du contenu ni des directives en matière de vie privée de ces sites. Vous devez vérifier les politiques sur la vie privée des sites placés en lien par l’ÉTS et exercer votre jugement quant à l’exactitude et à la fiabilité des renseignements qu’ils renferment. Si vous décidez d’accéder à ces sites web, vous le faites à vos propres risques. De plus, l'ÉTS ne peut être tenue responsable de tout dommage ou perte découlant de l'utilisation de ces autres sites.</p>    <hr>  <p>Si vous avez des questions ou des commentaires, veuillez communiquer avec nous à l'adresse <a href="mailto:stages@etsmtl.ca">stages@etsmtl.ca</a>.</p>  </div>        </footer>
+    </div>
+
+    <script src="./Poste - Stages_files/jqueryval"></script>
+
+
+    <div id="dialog-confirm"></div>	
+
+
+</body></html>
