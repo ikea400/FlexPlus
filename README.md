@@ -230,6 +230,8 @@ Authorized users (defined in `DISCORD_ALLOWED_USERS`) can control the bot direct
 - `!status` - Check if the scraper is running, standby, or requires MFA.
 - `!run` - Manually force a scrape cycle immediately.
 - `!auth` - Force a session wipe and restart the MFA process.
+- `!stop` - Suspend the automated scraper schedule (daemon mode only).
+- `!start` - Resume the automated scraper schedule (daemon mode only).
 - `!help` - Display available commands.
 
 ## Troubleshooting
