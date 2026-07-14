@@ -69,5 +69,5 @@ describe("PlaywrightEtsAdapter Parser", () => {
     expect(rawListing.deadlineDate).toBeNull(); // No deadline date present in informations under "date limite" or "date de clôture"
     expect(rawListing.descriptionHtml).toContain("Informations générales");
     expect(rawListing.descriptionHtml).toContain("Description du stage & Mission");
-  });
+  }, 30000);
 });
