@@ -63,6 +63,15 @@ const autoApply = process.env["AUTO_APPLY"] === "true";
 
 const scraperCron = process.env["SCRAPER_CRON"] ?? "0 */6 * * *";
 
+const jitterMinSec = Math.max(
+  0,
+  parseInt(process.env["SCRAPER_JITTER_MIN_SEC"] ?? "0", 10) || 0,
+);
+const jitterMaxSec = Math.max(
+  0,
+  parseInt(process.env["SCRAPER_JITTER_MAX_SEC"] ?? "0", 10) || 0,
+);
+
 // ─── Execution Logic ──────────────────────────────────────────────────────────
 
 async function runScrapeJob(
@@ -213,11 +222,28 @@ async function runScrapeJob(
       !(err instanceof Error) ||
       !err.message.includes("Authentication failed")
     ) {
-      await bot
-        .sendError(
-          `🚨 **Erreur critique du scraper:**\n\`\`\`text\n${errorMsg}\n\`\`\``,
-        )
-        .catch(() => {});
+      let siteIsDown = false;
+      if (scraperAdapter) {
+        try {
+          siteIsDown = await scraperAdapter.isSiteDown();
+        } catch (checkErr) {
+          console.error("[FlexPlus] Failed to check if site is down:", checkErr);
+        }
+      }
+
+      if (siteIsDown) {
+        await bot
+          .sendError(
+            `⚠️ **Portail ÉTS inaccessible**\nLe portail de placement de l'ÉTS est actuellement hors service (page "Site inaccessible" détectée).`,
+          )
+          .catch(() => {});
+      } else {
+        await bot
+          .sendError(
+            `🚨 **Erreur critique du scraper:**\n\`\`\`text\n${errorMsg}\n\`\`\``,
+          )
+          .catch(() => {});
+      }
     }
   } finally {
     if (scraperAdapter) {
@@ -301,6 +327,11 @@ async function main(): Promise<void> {
     console.log(
       `[FlexPlus] Daemon mode active. Scheduling cron with expression: "${scraperCron}"`,
     );
+    if (jitterMaxSec > jitterMinSec) {
+      console.log(
+        `[FlexPlus] Humanisation active: cron runs will be delayed randomly between ${jitterMinSec}s and ${jitterMaxSec}s.`,
+      );
+    }
 
     console.log("[FlexPlus] Running startup integration checks...");
     const discordHealth = await bot.healthCheck();
@@ -320,6 +351,15 @@ async function main(): Promise<void> {
     await runScrapeJob(useCase, bot);
 
     const task = cron.schedule(scraperCron, async () => {
+      if (jitterMaxSec > jitterMinSec) {
+        const delaySeconds = Math.floor(
+          jitterMinSec + Math.random() * (jitterMaxSec - jitterMinSec + 1),
+        );
+        console.log(
+          `[FlexPlus] Cron triggered. Delaying run by ${delaySeconds} seconds for humanisation...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
+      }
       await runScrapeJob(useCase, bot);
     });
 

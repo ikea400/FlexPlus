@@ -841,6 +841,39 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
     };
   }
 
+  // ─── IEtsScraper: isSiteDown ───────────────────────────────────────────────
+
+  async isSiteDown(): Promise<boolean> {
+    if (!this.page) return false;
+    try {
+      const title = await this.page.title().catch(() => "");
+      if (title.toLowerCase().includes("site inaccessible")) {
+        return true;
+      }
+
+      const h1Text = await this.page.locator("h1").innerText().catch(() => "");
+      if (h1Text.toLowerCase().includes("site web inaccessible")) {
+        return true;
+      }
+
+      const bodyText = await this.page.innerText("body").catch(() => "");
+      if (
+        bodyText.toLowerCase().includes("site web inaccessible") ||
+        bodyText.toLowerCase().includes("présentement inaccessible")
+      ) {
+        return true;
+      }
+
+      return false;
+    } catch (err) {
+      console.error(
+        "[PlaywrightEtsAdapter] Error checking if site is down:",
+        err,
+      );
+      return false;
+    }
+  }
+
   // ─── IEtsScraper: dispose ──────────────────────────────────────────────────
 
   async dispose(): Promise<void> {

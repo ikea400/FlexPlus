@@ -69,5 +69,17 @@ describe("PlaywrightEtsAdapter Parser", () => {
     expect(rawListing.deadlineDate).toBeNull(); // No deadline date present in informations under "date limite" or "date de clôture"
     expect(rawListing.descriptionHtml).toContain("Informations générales");
     expect(rawListing.descriptionHtml).toContain("Description du stage & Mission");
+
+    // Test that isSiteDown returns false on a valid page
+    const siteIsDownValid = await adapter.isSiteDown();
+    expect(siteIsDownValid).toBe(false);
+
+    // Test that isSiteDown returns true on the Site - Inaccessible page
+    const inaccessiblePath = resolve(process.cwd(), "src/infrastructure/adapters/fixtures/Site - Inaccessible.html");
+    const inaccessibleUrl = `file://${inaccessiblePath.replace(/\\/g, "/")}`;
+
+    await adapter.getPosteDetail(inaccessibleUrl).catch(() => {});
+    const siteIsDownInaccessible = await adapter.isSiteDown();
+    expect(siteIsDownInaccessible).toBe(true);
   }, 30000);
 });

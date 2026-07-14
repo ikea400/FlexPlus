@@ -291,6 +291,11 @@ export interface IEtsScraper {
   scrape(options: ScraperOptions): Promise<ScrapingResult>;
 
   /**
+   * Checks if the scraper is currently showing the site down / inaccessible screen.
+   */
+  isSiteDown(): Promise<boolean>;
+
+  /**
    * Releases browser resources. Must be called in a finally block.
    */
   dispose(): Promise<void>;
