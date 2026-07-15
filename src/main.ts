@@ -69,7 +69,7 @@ const jitterMinSec = Math.max(
 );
 const jitterMaxSec = Math.max(
   0,
-  parseInt(process.env["SCRAPER_JITTER_MAX_SEC"] ?? "0", 10) || 0,
+  parseInt(process.env["SCRAPER_JITTER_MAX_SEC"] ?? "300", 10) || 0,
 );
 
 // ─── Execution Logic ──────────────────────────────────────────────────────────
