@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)https://see.etsmtl.ca/Postes/Affichages -->
+<html lang="fr" antidoteapi_jsconnect="true" class=" js no-flexbox flexbox-legacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths" style=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="google" value="notranslate">
+    <title>
+Postes - Stages
+    </title>
+
+    <link href="https://see.etsmtl.ca/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <meta name="viewport" content="width=device-width">
+    <link href="./affichage-desactiver_files/css" rel="stylesheet">
+
+    <link href="./affichage-desactiver_files/css(1)" rel="stylesheet">
+
+    <script src="./affichage-desactiver_files/jquery"></script>
+
+    <script src="./affichage-desactiver_files/jqueryui"></script>
+
+    <script src="./affichage-desactiver_files/modernizr"></script>
+
+
+    <script src="./affichage-desactiver_files/gasp"></script>
+
+    <link href="./affichage-desactiver_files/jqueryplugins" rel="stylesheet">
+
+    <script src="./affichage-desactiver_files/jqueryplugins(1)"></script>
+
+
+    <script src="./affichage-desactiver_files/infragistics-fr.js.téléchargement"></script>
+    <script src="./affichage-desactiver_files/infragistics.core.js.téléchargement"></script>
+    <script src="./affichage-desactiver_files/infragistics.lob.js.téléchargement"></script>
+    <script src="./affichage-desactiver_files/infragistics.loader.js.téléchargement"></script>
+    <script type="text/javascript" src="./affichage-desactiver_files/gasp-recherchefiltre.js.téléchargement"></script>
+
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#etsMCTwoRight").addClass("etsRightInfragistic");
+
+            
+            $("#ReinitialiserBtn").click(function () {
+                $("#grid1").igGridPaging("pageIndex", 0);
+                $("#rechercheForm").find("input[type='text']").val("");
+                $("#rechercheForm").find("#FiltreRecherche_DureeStage option[value='']").attr('selected', 'selected');
+                $("#rechercheForm").find("#FiltreRecherche_StartupCentech option[value='']").attr('selected', 'selected');
+                $("#rechercheForm").find("#FiltreRecherche_StageHorsQuebec option[value='']").attr('selected', 'selected');
+                $("#rechercheForm").find("#FiltreRecherche_StageDeveloppementDurable option[value='']").attr('selected', 'selected');
+                $("#rechercheForm").find("#FiltreRecherche_StageBourse option[value='']").attr('selected', 'selected');
+                $("#rechercheForm").find("#FiltreRecherche_StageTechnologieSante option[value='']").attr('selected', 'selected');
+                $("#rechercheForm").find("#FiltreRecherche_FlexPlus option[value='']").attr('selected', 'selected');
+                $("#rechercherBtn").click();
+            });
+        });
+
+
+        $(document).on('iggridrendered', '#grid1', function (evt, ui) {
+            $("#rechercherBtn").click();
+        });
+
+    </script>
+
+    <style>
+        .tableLegende {
+            border-collapse: collapse;
+        }
+
+        .tableLegende, .tableLegende td, .tableLegende th {
+            border: 1px solid black;
+        }
+
+        .tableLegende .icone {
+            border: 1px solid black;
+            width:20px;
+        }
+
+        .tableLegende .texte {
+            border: 1px solid black;
+            width:200px;
+        }
+
+        fieldset.wg2Recherche label {
+            width:190px;
+        }
+    </style>
+
+    <link href="./affichage-desactiver_files/PagesPrint.css" rel="stylesheet" type="text/css" media="print">
+    <script src="./affichage-desactiver_files/jquery.ba-hashchange.min.js.téléchargement"></script>
+
+
+
+    <!--[if lt IE 9]>
+	        <link href="/content/ie8.css" rel="stylesheet" type="text/css" />
+        <![endif]-->
+</head>
+
+<body>
+    <header>
+        <div id="etsHeaderContainer">
+            <div id="etsheader">
+                <div style="position: relative; height: 48px;">
+                    <img style="border-width: 0px; height: 48px;" src="./affichage-desactiver_files/ETS-web-blanc-transparent.png" alt="ETS" id="ctl00_Image1">
+                    <div style="position: absolute; right: 0pt; bottom: 5px;">
+<a class="lienDeconnexion" href="https://see.etsmtl.ca/Authentification/Deconnexion">Déconnexion</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="etsBellowHeader">
+        <div id="etspage">
+            <div id="etsMCContainer" class="clearfix">
+                <div id="etsMCTop">
+                    <div class="wgFr">
+
+Natael&nbsp;Lavoie
+                    </div>
+                    &nbsp;
+                </div>
+
+                
+                    <div class="MenuTop" id="MenuTop">
+                        <ul>
+                            <li><a href="https://see.etsmtl.ca/Accueil">Accueil</a></li>
+                            <li><a href="https://see.etsmtl.ca/Postes/Affichages">Affichages</a></li>
+
+
+                                <li><a href="https://see.etsmtl.ca/SuiviPostulations">Suivi des postulations</a></li>
+                                <li><a href="https://see.etsmtl.ca/RapportStage?modeCorrection=False">Rapport de stage</a></li>
+
+                            <li><a href="https://see.etsmtl.ca/ActivitesStagesEmplois">Réseautage et stages par contact direct</a></li>
+                            
+
+                                <li><a href="https://see.etsmtl.ca/Documentation">Documentation</a></li>
+
+
+                        </ul>
+                    </div>
+                <div id="etsMCTwoRight" class="etsRightInfragistic">
+                    <div id="etsMCHeader">
+                    </div>
+                    <div id="etsMCContent">
+                        <section class="content-wrapper main-content clear-fix">
+                            
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#FiltreRecherche_DureeStage").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $("#FiltreRecherche_StartupCentech").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $("#FiltreRecherche_StageHorsQuebec").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $("#FiltreRecherche_StageDeveloppementDurable").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $("#FiltreRecherche_StageBourse").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $("#FiltreRecherche_StageTechnologieSante").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $("#FiltreRecherche_FlexPlus").change(function () {
+            if ($(this).find("option:selected").val() != "") {
+                $(this).find("option[value='']").attr('selected', false);
+            }
+        });
+
+        $('#grid1').on('iggriddatarendered', function () {
+            $('#grid1 img[src$="nouveau.png"]').attr('title', 'Ce poste est nouveau');
+
+            $('#grid1 img[src$="okvert.png"]').attr('title', 'Vous avez déjà postulé');
+            $('#grid1 img[src$="star.png"]').attr('title', 'Ce poste est parmi vos favoris');
+            $('#grid1 img[src$="update.png"]').attr('title', 'Ce poste a été mis à jour récemment');
+            //$('#grid1 img[src$="globe.png"]').attr('title', 'Ce poste est un stage hors Québec');
+            //$('#grid1 img[src$="lightbulb.png"]').attr('title', 'Ce poste est un stage au sein d’une startup du Centech ÉTS');
+
+            //Mettre des icons de header en visibile
+            $(this).parents('.ui-iggrid').find('thead th[id="grid1_IsPostulee"] .ui-iggrid-headertext').css('overflow', 'visible');
+            $(this).parents('.ui-iggrid').find('thead th[id="grid1_IsNouveau"] .ui-iggrid-headertext').css('overflow', 'visible');
+            $(this).parents('.ui-iggrid').find('thead th[id="grid1_IsFavori"] .ui-iggrid-headertext').css('overflow', 'visible');
+            //$(this).parents('.ui-iggrid').find('thead th[id="grid1_IsStartupCentech"] .ui-iggrid-headertext').css('overflow', 'visible');
+            //$(this).parents('.ui-iggrid').find('thead th[id="grid1_IsInternational"] .ui-iggrid-headertext').css('overflow', 'visible');
+
+
+            //var hashPage = location.hash.match(page = /[\d]+/gi)
+            //var currentPage = $("#grid1").igGridPaging("pageIndex");
+            //if (!isNaN(hashPage) && !isNaN(currentPage) && parseInt(hashPage) >= 0 && hashPage != currentPage) {
+            //    $("#grid1").igGridPaging("pageIndex", parseInt(hashPage));
+            //}
+            //$("#grid1").igGridPaging("pageIndex", 0);
+
+            //history.pushState('data to be passed', 'Title of the page', '/Postes/Affichages');
+
+            if ($("#grid1").find('td').eq(1).find("a").text() == "") {
+                if ($("#firstLoad").val() == "false") {
+                    $("#grid1").find('td').find("img").remove();
+                    $("#grid1").find('td').eq(10).find("a").remove();
+                }
+            }
+
+            $("#firstLoad").val("false");
+        });
+
+        //$('#grid1').on('iggridpagingpageindexchanging', function (evt, ui) {
+        //    location.hash = "page=" + ui.newPageIndex;
+        //});
+
+
+        $('#grid1').recherchefiltre({
+            url: '/Postes/Rechercher'
+        });
+
+        var ApteEmplois = $("#ContexteUtilisateur_ApteEmplois").val();
+        var ApteStages = $("#ContexteUtilisateur_ApteStages").val();
+        var ApteStagesAutre = $("#ContexteUtilisateur_ApteStagesAutre").val();
+
+
+        if (ApteEmplois == "True") {
+            $("#FiltreRecherche_DureeStage").attr("disabled", "disabled");
+            $("#FiltreRecherche_StartupCentech").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageHorsQuebec").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageDeveloppementDurable").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageBourse").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageTechnologieSante").attr("disabled", "disabled");
+            $("#FiltreRecherche_FlexPlus").attr("disabled", "disabled");
+
+        } else if (ApteStages == "True") {
+            $("#FiltreRecherche_DureeStage").attr("disabled", false);
+            $("#FiltreRecherche_StartupCentech").attr("disabled", false);
+            $("#FiltreRecherche_StageHorsQuebec").attr("disabled", false);
+            $("#FiltreRecherche_StageDeveloppementDurable").attr("disabled", false);
+            $("#FiltreRecherche_StageBourse").attr("disabled", false);
+            $("#FiltreRecherche_StageTechnologieSante").attr("disabled", false);
+            $("#FiltreRecherche_FlexPlus").attr("disabled", false);
+
+        } else if (ApteStagesAutre == "True") {
+            $("#FiltreRecherche_DureeStage").attr("disabled", "disabled");
+            $("#FiltreRecherche_StartupCentech").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageHorsQuebec").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageDeveloppementDurable").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageBourse").attr("disabled", "disabled");
+            $("#FiltreRecherche_StageTechnologieSante").attr("disabled", "disabled");
+            $("#FiltreRecherche_FlexPlus").attr("disabled", "disabled");
+        }
+    });
+</script>
+
+<div class="pNoFlex">
+            <h2>Affichage</h2>
+
+            <p class="messageAlerte">Aucun poste ne vous est disponible pour l'instant.</p>
+</div>
+
+
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+<div style="text-align:justify;margin-left:auto;margin-right:auto;width:50%">  <p>Les sites Web de l’ÉTS peuvent contenir des liens vers d’autres sites. L’ÉTS n’est responsable ni du contenu ni des directives en matière de vie privée de ces sites. Vous devez vérifier les politiques sur la vie privée des sites placés en lien par l’ÉTS et exercer votre jugement quant à l’exactitude et à la fiabilité des renseignements qu’ils renferment. Si vous décidez d’accéder à ces sites web, vous le faites à vos propres risques. De plus, l'ÉTS ne peut être tenue responsable de tout dommage ou perte découlant de l'utilisation de ces autres sites.</p>    <hr>  <p>Si vous avez des questions ou des commentaires, veuillez communiquer avec nous à l'adresse <a href="mailto:stages@etsmtl.ca">stages@etsmtl.ca</a>.</p>  </div>        </footer>
+    </div>
+
+    <script src="./affichage-desactiver_files/jqueryval"></script>
+
+
+    <div id="dialog-confirm"></div>	
+
+
+</body></html>

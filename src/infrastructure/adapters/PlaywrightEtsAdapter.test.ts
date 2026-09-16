@@ -74,13 +74,9 @@ describe("PlaywrightEtsAdapter Parser", () => {
     const siteIsDownValid = await adapter.isSiteDown();
     expect(siteIsDownValid).toBe(false);
 
-    // Test that isSiteDown returns true on the Site - Inaccessible page
-    const inaccessiblePath = resolve(process.cwd(), "src/infrastructure/adapters/fixtures/Site - Inaccessible.html");
-    const inaccessibleUrl = `file://${inaccessiblePath.replace(/\\/g, "/")}`;
-
-    await adapter.getPosteDetail(inaccessibleUrl).catch(() => {});
-    const siteIsDownInaccessible = await adapter.isSiteDown();
-    expect(siteIsDownInaccessible).toBe(true);
+    // Test that isAffichageDesactive returns false on a valid job detail page
+    const isDesactiveValid = await adapter.isAffichageDesactive();
+    expect(isDesactiveValid).toBe(false);
 
     // Test that takeScreenshot returns a Buffer
     const screenshot = await adapter.takeScreenshot();
@@ -88,5 +84,27 @@ describe("PlaywrightEtsAdapter Parser", () => {
     if (screenshot) {
       expect(screenshot.length).toBeGreaterThan(0);
     }
+  }, 30000);
+
+  it("should detect site down on Site - Inaccessible.html", async () => {
+    const inaccessiblePath = resolve(process.cwd(), "src/infrastructure/adapters/fixtures/Site - Inaccessible.html");
+    const inaccessibleUrl = `file://${inaccessiblePath.replace(/\\/g, "/")}`;
+
+    const page = await (adapter as unknown as { ensureBrowser: () => Promise<{ goto: (url: string, opts?: unknown) => Promise<unknown> }> }).ensureBrowser();
+    await page.goto(inaccessibleUrl, { waitUntil: "domcontentloaded" });
+
+    expect(await adapter.isSiteDown()).toBe(true);
+    expect(await adapter.isAffichageDesactive()).toBe(false);
+  }, 30000);
+
+  it("should detect affichage disabled on Affichage - Desactive.html", async () => {
+    const desactivePath = resolve(process.cwd(), "src/infrastructure/adapters/fixtures/Affichage - Desactive.html");
+    const desactiveUrl = `file://${desactivePath.replace(/\\/g, "/")}`;
+
+    const page = await (adapter as unknown as { ensureBrowser: () => Promise<{ goto: (url: string, opts?: unknown) => Promise<unknown> }> }).ensureBrowser();
+    await page.goto(desactiveUrl, { waitUntil: "domcontentloaded" });
+
+    expect(await adapter.isAffichageDesactive()).toBe(true);
+    expect(await adapter.isSiteDown()).toBe(false);
   }, 30000);
 });

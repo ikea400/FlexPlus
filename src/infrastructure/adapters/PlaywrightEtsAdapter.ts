@@ -412,9 +412,20 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
       console.log("[PlaywrightEtsAdapter] Navigating to Affichages section...");
       await this.navigateToSection(ETS_SELECTORS.Navigation.MenuAffichages);
 
-      await page.waitForSelector(ETS_SELECTORS.RechercheAffichages.Formulaire, {
+      const formSelector = ETS_SELECTORS.RechercheAffichages.Formulaire;
+      const aucunPosteSelector =
+        ETS_SELECTORS.RechercheAffichages.MessageAucunPoste;
+
+      await page.waitForSelector(`${formSelector}, ${aucunPosteSelector}`, {
         state: "attached",
       });
+
+      if (await this.isAffichageDesactive()) {
+        console.log(
+          "[PlaywrightEtsAdapter] Affichage is not enabled yet ('Aucun poste ne vous est disponible pour l'instant.'). Returning 0 postings.",
+        );
+        return [];
+      }
 
       if (keyword && keyword.trim().length > 0) {
         await page.fill(
@@ -868,6 +879,46 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
     } catch (err) {
       console.error(
         "[PlaywrightEtsAdapter] Error checking if site is down:",
+        err,
+      );
+      return false;
+    }
+  }
+
+  // ─── IEtsScraper: isAffichageDesactive ─────────────────────────────────────
+
+  async isAffichageDesactive(): Promise<boolean> {
+    if (!this.page) return false;
+    try {
+      const alertLocator = this.page.locator(
+        ETS_SELECTORS.RechercheAffichages.MessageAucunPoste,
+      );
+      const isAlertPresent = (await alertLocator.count()) > 0;
+      if (isAlertPresent) {
+        const text = await alertLocator.first().innerText().catch(() => "");
+        if (
+          text.toLowerCase().includes("aucun poste ne vous est disponible") ||
+          text.toLowerCase().includes("aucun poste")
+        ) {
+          return true;
+        }
+      }
+
+      const bodyText = await this.page.innerText("body").catch(() => "");
+      if (
+        bodyText
+          .toLowerCase()
+          .includes("aucun poste ne vous est disponible pour l'instant") ||
+        (bodyText.toLowerCase().includes("aucun poste ne vous est disponible") &&
+          bodyText.toLowerCase().includes("affichage"))
+      ) {
+        return true;
+      }
+
+      return false;
+    } catch (err) {
+      console.error(
+        "[PlaywrightEtsAdapter] Error checking if affichage is desactive:",
         err,
       );
       return false;

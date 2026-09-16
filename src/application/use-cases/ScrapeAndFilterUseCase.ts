@@ -27,6 +27,7 @@ export interface UseCaseConfig {
   readonly excludedKeywords?: readonly string[] | undefined;
   readonly aiCustomPrompt?: string | undefined;
   readonly autoApply?: boolean | undefined;
+  readonly autoApplyMinThreshold?: number | undefined;
 }
 
 export interface UseCaseResult {
@@ -238,10 +239,14 @@ export class ScrapeAndFilterUseCase {
 
       // 4.5 Auto-postulation for newly found high-relevance unapplied listings (Step 3 - optional)
       if (config.autoApply === true) {
-        console.log("[UseCase] Checking for new high-relevance unapplied placements to auto-apply...");
+        const minAutoApplyScore =
+          config.autoApplyMinThreshold ?? config.relevanceThreshold;
+        console.log(
+          `[UseCase] Checking for new high-relevance unapplied placements to auto-apply (min relevance threshold: ${minAutoApplyScore})...`,
+        );
         const unappliedPlacements = await this.repository.findAll({
           unappliedOnly: true,
-          minRelevanceScore: config.relevanceThreshold,
+          minRelevanceScore: minAutoApplyScore,
         });
 
         if (unappliedPlacements.length > 0) {

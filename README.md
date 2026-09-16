@@ -124,6 +124,7 @@ We recommend running this service via Docker to avoid OS-level Playwright and de
    | [`PLAYWRIGHT_TIMEOUT_MS`](#playwright_timeout_ms) | Optional | `30000` | Playwright action and navigation timeout limit in milliseconds. |
    | [`PLAYWRIGHT_USER_DATA_DIR`](#playwright_user_data_dir) | Optional | `./data/browser-context` | Directory where browser cache and session cookies are persisted. |
    | [`AUTO_APPLY`](#auto_apply) | Optional | `false` | Automatically submit postulations for high-scoring offers (RISKY). |
+   | [`AUTO_APPLY_MIN_THRESHOLD`](#auto_apply) | Optional | `80` | Minimum AI score required to automatically submit an application. |
    | [`LOG_LEVEL`](#log_level) | Optional | `info` | Logs level filters: `error`, `warn`, `info`, or `debug`. |
    | [`NODE_ENV`](#node_env) | Optional | `development` | Node environment config: `development` or `production`. |
    | [`TZ`](#tz) | Optional | `America/Montreal` | Timezone code configured for the container OS and scheduling tasks. |
@@ -164,7 +165,8 @@ We recommend running this service via Docker to avoid OS-level Playwright and de
 
    #### Playwright Caching & Auto-Apply
    - **`PLAYWRIGHT_USER_DATA_DIR`**: Persistent context cache. Stores ADFS session cookies to avoid requesting MFA approvals on every cron run.
-   - **`AUTO_APPLY`**: Extremely risky. If enabled, the system fills the portal password confirmation field and applies automatically if AI score > relevance threshold. Keep disabled (`false`).
+   - **`AUTO_APPLY`**: Extremely risky. If enabled, the system fills the portal password confirmation field and applies automatically if AI score >= `AUTO_APPLY_MIN_THRESHOLD`. Keep disabled (`false`).
+   - **`AUTO_APPLY_MIN_THRESHOLD`**: Minimum relevance score (default: `80`) needed to trigger auto-application. Placements with scores between `AI_RELEVANCE_THRESHOLD` and `AUTO_APPLY_MIN_THRESHOLD` will only be notified in Discord, not automatically applied to.
 
    #### Free AI API Options
 

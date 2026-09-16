@@ -67,6 +67,7 @@ export const ETS_SELECTORS = {
     ChampMotCle: "#FiltreRecherche_MotCle",
     BoutonRechercher: "#rechercherBtn",
     GrilleResultats: "#grid1 tbody.ui-iggrid-tablebody tr",
+    MessageAucunPoste: ".pNoFlex p.messageAlerte, p.messageAlerte, .pNoFlex",
   },
   DetailsDuPoste: {
     NumeroPoste: "#spanTitreEmploiStage",
@@ -294,6 +295,12 @@ export interface IEtsScraper {
    * Checks if the scraper is currently showing the site down / inaccessible screen.
    */
   isSiteDown(): Promise<boolean>;
+
+  /**
+   * Checks if the portal displays the "Affichage non disponible / désactivé" message
+   * (e.g., "Aucun poste ne vous est disponible pour l'instant.").
+   */
+  isAffichageDesactive(): Promise<boolean>;
 
   /**
    * Captures a screenshot of the current page.

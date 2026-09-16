@@ -60,6 +60,12 @@ const excludedKeywords = excludedKeywordsRaw
 const aiCustomPrompt = process.env["AI_CUSTOM_PROMPT"] ?? undefined;
 
 const autoApply = process.env["AUTO_APPLY"] === "true";
+const autoApplyMinThresholdRaw =
+  process.env["AUTO_APPLY_MIN_THRESHOLD"] ??
+  process.env["AUTO_APPLY_THRESHOLD"];
+const autoApplyMinThreshold = autoApplyMinThresholdRaw
+  ? parseInt(autoApplyMinThresholdRaw, 10)
+  : 80;
 
 const scraperCron = process.env["SCRAPER_CRON"] ?? "0 */6 * * *";
 
@@ -176,6 +182,7 @@ async function runScrapeJob(
       excludedKeywords,
       aiCustomPrompt,
       autoApply,
+      autoApplyMinThreshold,
     });
 
     console.log("=== Job Results ===");
@@ -223,11 +230,13 @@ async function runScrapeJob(
       !err.message.includes("Authentication failed")
     ) {
       let siteIsDown = false;
+      let affichageDesactive = false;
       let screenshot: Buffer | null = null;
       if (scraperAdapter) {
         try {
           siteIsDown = await scraperAdapter.isSiteDown();
-          if (!siteIsDown) {
+          affichageDesactive = await scraperAdapter.isAffichageDesactive();
+          if (!siteIsDown && !affichageDesactive) {
             screenshot = await scraperAdapter.takeScreenshot();
           }
         } catch (checkErr) {
@@ -242,6 +251,12 @@ async function runScrapeJob(
         await bot
           .sendError(
             `⚠️ **Portail ÉTS inaccessible**\nLe portail de placement de l'ÉTS est actuellement hors service (page "Site inaccessible" détectée).`,
+          )
+          .catch(() => {});
+      } else if (affichageDesactive) {
+        await bot
+          .sendError(
+            `ℹ️ **Affichage non disponible**\nAucun poste ne vous est disponible pour l'instant sur le portail ÉTS.`,
           )
           .catch(() => {});
       } else {

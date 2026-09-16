@@ -64,7 +64,7 @@ jobs:
   deploy:
     name: Deploy to VM (Self-Hosted Runner)
     needs: ci
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: false # Disabled deploy (was: github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: self-hosted
 
     steps:
