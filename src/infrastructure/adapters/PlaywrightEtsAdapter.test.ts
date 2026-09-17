@@ -107,4 +107,48 @@ describe("PlaywrightEtsAdapter Parser", () => {
     expect(await adapter.isAffichageDesactive()).toBe(true);
     expect(await adapter.isSiteDown()).toBe(false);
   }, 30000);
+
+  it("should extract rows across all pages using Infragistics igGrid pager", async () => {
+    const pagingPath = resolve(process.cwd(), "src/infrastructure/adapters/fixtures/Affichage - Paging.html");
+    const pagingUrl = `file://${pagingPath.replace(/\\/g, "/")}`;
+
+    const internalAdapter = adapter as unknown as {
+      ensureBrowser: () => Promise<any>;
+      extractAllPagesFromGrid: (
+        page: any,
+        gridId: string,
+        extractRows: () => Promise<any[]>,
+        getKey: (item: any) => string,
+      ) => Promise<any[]>;
+    };
+
+    const page = await internalAdapter.ensureBrowser();
+    await page.goto(pagingUrl, { waitUntil: "domcontentloaded" });
+
+    // Call extractAllPagesFromGrid
+    const allRows = await internalAdapter.extractAllPagesFromGrid(
+      page,
+      "grid1",
+      async () => {
+        return page.$$eval("#grid1 tbody tr", (rows: any[]) =>
+          rows.map((r) => ({
+            id: r.getAttribute("data-id"),
+            title: r.querySelector("td:nth-child(3)")?.textContent?.trim(),
+          })),
+        );
+      },
+      (row) => row.id,
+    );
+
+    // Verify all 5 rows across the 3 pages are returned
+    expect(allRows).toHaveLength(5);
+    expect(allRows.map((r) => r.id)).toEqual([
+      "POST-001",
+      "POST-002",
+      "POST-003",
+      "POST-004",
+      "POST-005",
+    ]);
+  }, 30000);
 });
+

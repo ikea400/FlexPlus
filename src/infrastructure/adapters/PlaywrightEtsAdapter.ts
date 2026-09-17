@@ -344,14 +344,26 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
         state: "attached",
       });
 
-      const actives = await this.extractGridRows(
+      const actives = await this.extractAllPagesFromGrid(
         page,
-        ETS_SELECTORS.SuiviDesPostulations.GrilleActives,
+        "grid1",
+        () =>
+          this.extractGridRows(
+            page,
+            ETS_SELECTORS.SuiviDesPostulations.GrilleActives,
+          ),
+        (row) => row.numeroPoste || `${row.entreprise}_${row.titrePoste}`,
       );
 
-      const inactives = await this.extractGridRows(
+      const inactives = await this.extractAllPagesFromGrid(
         page,
-        ETS_SELECTORS.SuiviDesPostulations.GrilleInactives,
+        "grid2",
+        () =>
+          this.extractGridRows(
+            page,
+            ETS_SELECTORS.SuiviDesPostulations.GrilleInactives,
+          ),
+        (row) => row.numeroPoste || `${row.entreprise}_${row.titrePoste}`,
       );
 
       return { actives, inactives };
@@ -362,6 +374,170 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
         { currentUrl: page.url() },
       );
     }
+  }
+
+  /**
+   * Traverses all pages of an Infragistics igGrid table (e.g. #grid1, #grid2)
+   * by clicking the next page button until the last page is reached,
+   * accumulating rows across all pages without duplicates.
+   */
+  private async extractAllPagesFromGrid<T>(
+    page: Page,
+    gridId: string,
+    extractCurrentPageRows: () => Promise<readonly T[]>,
+    getKey: (item: T) => string,
+  ): Promise<readonly T[]> {
+    const pagerSelector = ETS_SELECTORS.Pagination.SelecteurPager(gridId);
+    const pager = page.locator(pagerSelector);
+
+    const hasPager =
+      (await pager.count()) > 0 &&
+      (await pager.first().isVisible().catch(() => false));
+
+    if (!hasPager) {
+      return extractCurrentPageRows();
+    }
+
+    const pagerLabelSelector = ETS_SELECTORS.Pagination.SelecteurLabel(gridId);
+    const pagerLabelEl = page.locator(pagerLabelSelector);
+    if (await pagerLabelEl.isVisible().catch(() => false)) {
+      const initialLabel = await pagerLabelEl.innerText().catch(() => "");
+      console.log(
+        `[PlaywrightEtsAdapter] [${gridId}] Pager detected: "${initialLabel.trim()}"`,
+      );
+    }
+
+    const curPageSelector =
+      ETS_SELECTORS.Pagination.SelecteurPageCourante(gridId);
+    const activePageEl = page.locator(curPageSelector);
+    const activePageText = (
+      await activePageEl.innerText().catch(() => "")
+    ).trim();
+
+    // If for any reason we are not starting on page 1, reset to page 1
+    if (activePageText && activePageText !== "1") {
+      console.log(
+        `[PlaywrightEtsAdapter] [${gridId}] Currently on page ${activePageText}. Resetting to page 1...`,
+      );
+      const page1Link = page.locator(
+        `${ETS_SELECTORS.Pagination.SelecteurListePages(gridId)} li[title*='page 1' i] a, #${gridId}_pager .ui-iggrid-firstpage a, #${gridId}_pager .ui-iggrid-pagelink:has-text("1")`,
+      );
+      if (
+        (await page1Link.count()) > 0 &&
+        (await page1Link.first().isVisible().catch(() => false))
+      ) {
+        const prevLabel = await pagerLabelEl.innerText().catch(() => "");
+        await page1Link.first().click().catch(() => {});
+        await page
+          .waitForFunction(
+            ({ curSel, lblSel, prevLabel }) => {
+              const cur = document.querySelector(curSel)?.textContent?.trim();
+              const lbl = document.querySelector(lblSel)?.textContent?.trim();
+              return cur === "1" || (lbl && lbl !== prevLabel);
+            },
+            {
+              curSel: curPageSelector,
+              lblSel: pagerLabelSelector,
+              prevLabel,
+            },
+            { timeout: 5000 },
+          )
+          .catch(() => {});
+        await humanDelay(300, 500);
+      }
+    }
+
+    const itemsMap = new Map<string, T>();
+    let pageNum = 1;
+    const maxPages = 50; // Safety limit against infinite paging loops
+
+    while (pageNum <= maxPages) {
+      const pageRows = await extractCurrentPageRows();
+      let newRowsCount = 0;
+      for (const row of pageRows) {
+        const key = getKey(row);
+        if (key && !itemsMap.has(key)) {
+          itemsMap.set(key, row);
+          newRowsCount++;
+        } else if (!key) {
+          itemsMap.set(`row_${pageNum}_${itemsMap.size}`, row);
+          newRowsCount++;
+        }
+      }
+
+      console.log(
+        `[PlaywrightEtsAdapter] [${gridId}] Page ${pageNum}: found ${pageRows.length} rows (${newRowsCount} new, total: ${itemsMap.size}).`,
+      );
+
+      // Check next page button
+      const nextBtnSelector =
+        ETS_SELECTORS.Pagination.SelecteurPageSuivante(gridId);
+      const nextBtn = page.locator(nextBtnSelector);
+      if ((await nextBtn.count()) === 0) {
+        break;
+      }
+
+      const isNextVisible = await nextBtn
+        .first()
+        .isVisible()
+        .catch(() => false);
+      if (!isNextVisible) {
+        break;
+      }
+
+      const classAttr =
+        (await nextBtn.first().getAttribute("class").catch(() => "")) || "";
+      const isClassDisabled =
+        classAttr.includes("ui-state-disabled") ||
+        classAttr.includes("ui-iggrid-paging-item-disabled");
+      const ariaDisabled =
+        (await nextBtn.first().getAttribute("aria-disabled").catch(() => "")) ===
+        "true";
+
+      if (isClassDisabled || ariaDisabled) {
+        console.log(
+          `[PlaywrightEtsAdapter] [${gridId}] Reached last page (next button disabled).`,
+        );
+        break;
+      }
+
+      const prevLabel = await pagerLabelEl.innerText().catch(() => "");
+      const prevActivePage = await activePageEl.innerText().catch(() => "");
+
+      await nextBtn.first().click({ timeout: 5000 }).catch(async () => {
+        await nextBtn.first().click({ force: true }).catch(() => {});
+      });
+
+      // Wait for the grid to update to the next page
+      try {
+        await page.waitForFunction(
+          ({ lblSel, curSel, prevLabel, prevActivePage }) => {
+            const lbl = document.querySelector(lblSel)?.textContent?.trim();
+            const cur = document.querySelector(curSel)?.textContent?.trim();
+            return Boolean(
+              (lbl && lbl !== prevLabel) || (cur && cur !== prevActivePage),
+            );
+          },
+          {
+            lblSel: pagerLabelSelector,
+            curSel: curPageSelector,
+            prevLabel,
+            prevActivePage,
+          },
+          { timeout: 10000 },
+        );
+      } catch {
+        console.log(
+          `[PlaywrightEtsAdapter] [${gridId}] Timeout waiting for page transition after page ${pageNum}. Stopping pagination.`,
+        );
+        break;
+      }
+
+      await humanDelay(300, 600);
+      pageNum++;
+    }
+
+    return Array.from(itemsMap.values());
   }
 
   private async extractGridRows(
@@ -453,35 +629,41 @@ export class PlaywrightEtsAdapter implements IEtsScraper {
       });
 
       const origin = new URL(this.urls.baseUrl).origin;
-      const affichageRows: AffichageRow[] = await page.$$eval(
-        ETS_SELECTORS.RechercheAffichages.GrilleResultats,
-        (rows, baseOrigin) =>
-          rows.map((tr) => {
-            const link = tr.querySelector("a") as HTMLAnchorElement | null;
-            const href = link?.href ?? "";
-            const numeroPoste =
-              tr.getAttribute("data-id") ||
-              (
-                tr.querySelector("td:nth-child(2)") as HTMLElement | null
-              )?.innerText.trim() ||
-              "";
-            const titrePoste =
-              (
-                tr.querySelector("td:nth-child(3)") as HTMLElement | null
-              )?.innerText.trim() || "";
-            return {
-              numeroPoste,
-              titrePoste,
-              detailUrl: href.startsWith("http")
-                ? href
-                : `${baseOrigin}${href}`,
-            };
-          }),
-        origin,
+      const affichageRows = await this.extractAllPagesFromGrid<AffichageRow>(
+        page,
+        "grid1",
+        () =>
+          page.$$eval(
+            ETS_SELECTORS.RechercheAffichages.GrilleResultats,
+            (rows, baseOrigin) =>
+              rows.map((tr) => {
+                const link = tr.querySelector("a") as HTMLAnchorElement | null;
+                const href = link?.href ?? "";
+                const numeroPoste =
+                  tr.getAttribute("data-id") ||
+                  (
+                    tr.querySelector("td:nth-child(2)") as HTMLElement | null
+                  )?.innerText.trim() ||
+                  "";
+                const titrePoste =
+                  (
+                    tr.querySelector("td:nth-child(3)") as HTMLElement | null
+                  )?.innerText.trim() || "";
+                return {
+                  numeroPoste,
+                  titrePoste,
+                  detailUrl: href.startsWith("http")
+                    ? href
+                    : `${baseOrigin}${href}`,
+                };
+              }),
+            origin,
+          ),
+        (row) => row.numeroPoste || row.detailUrl,
       );
 
       console.log(
-        `[PlaywrightEtsAdapter] Found ${affichageRows.length} postings in results grid. Scrapping details...`,
+        `[PlaywrightEtsAdapter] Found ${affichageRows.length} postings in results grid across all pages. Scrapping details...`,
       );
 
       const details: PosteDetail[] = [];

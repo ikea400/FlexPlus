@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Affichage Paging Test</title>
+  <style>
+    .ui-iggrid-paging { display: flex; align-items: center; gap: 8px; }
+    .ui-iggrid-paging-item { display: inline-block; padding: 4px 8px; cursor: pointer; border: 1px solid #ccc; }
+    .ui-iggrid-pagelist { display: flex; list-style: none; padding: 0; margin: 0; gap: 4px; }
+    .ui-state-disabled { opacity: 0.5; pointer-events: none; cursor: default; }
+    .ui-state-active { font-weight: bold; background: #e0e0e0; }
+    .ui-iggrid-pageimg { display: inline-block; width: 16px; height: 16px; background: #999; }
+  </style>
+</head>
+<body>
+  <div id="grid1_container">
+    <table id="grid1" class="ui-iggrid-table">
+      <tbody class="ui-iggrid-tablebody" id="grid1_tbody">
+        <tr data-id="POST-001">
+          <td><a href="/Poste/detail-001">Voir</a></td>
+          <td>POST-001</td>
+          <td>Développeur Frontend</td>
+          <td>Tech Corp</td>
+          <td>Active</td>
+        </tr>
+        <tr data-id="POST-002">
+          <td><a href="/Poste/detail-002">Voir</a></td>
+          <td>POST-002</td>
+          <td>Ingénieur Backend</td>
+          <td>Cloud Inc</td>
+          <td>Active</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div id="grid1_pager" class="ui-widget ui-iggrid-pager ui-helper-clearfix ui-corner-bottom ui-widget-header ui-iggrid-footer">
+      <span id="grid1_pager_label" class="ui-iggrid-pagerrecordslabel ui-iggrid-results" title="Plage de rangées actuelle">1 - 2 de 5 rangées</span>
+      <div class="ui-iggrid-paging">
+        <div class="ui-iggrid-prevpage ui-iggrid-paging-item ui-state-default ui-state-disabled" title="Aller à la page précédente">
+          <a href="javascript:void(0);"><span class="ui-iggrid-pageimg ui-iggrid-prevpageimg ui-icon ui-icon-triangle-1-w"></span></a>
+          <span class="ui-iggrid-prevpagelabel">préc</span>
+        </div>
+        <ul class="ui-helper-reset ui-iggrid-pagelist ui-iggrid-paging-item">
+          <li class="ui-iggrid-pagecurrent ui-state-active ui-corner-all" title="page 1"><a class="ui-iggrid-pagelinkcurrent" href="javascript:void(0);">1</a></li>
+          <li class="ui-iggrid-page ui-state-default ui-corner-all" title="page 2"><a class="ui-iggrid-pagelink ui-helper-reset" href="javascript:void(0);">2</a></li>
+          <li class="ui-iggrid-page ui-state-default ui-corner-all" title="page 3"><a class="ui-iggrid-pagelink ui-helper-reset" href="javascript:void(0);">3</a></li>
+        </ul>
+        <div class="ui-iggrid-nextpage ui-iggrid-paging-item ui-state-default" title="Aller à la page suivante">
+          <span class="ui-iggrid-nextpagelabel">suiv</span>
+          <a href="javascript:void(0);"><span class="ui-iggrid-pageimg ui-iggrid-nextpageimg ui-icon ui-icon-triangle-1-e"></span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pagesData = {
+      1: {
+        label: "1 - 2 de 5 rangées",
+        rows: [
+          { id: "POST-001", title: "Développeur Frontend", company: "Tech Corp", href: "/Poste/detail-001" },
+          { id: "POST-002", title: "Ingénieur Backend", company: "Cloud Inc", href: "/Poste/detail-002" }
+        ]
+      },
+      2: {
+        label: "3 - 4 de 5 rangées",
+        rows: [
+          { id: "POST-003", title: "Architecte Logiciel", company: "Dev Studio", href: "/Poste/detail-003" },
+          { id: "POST-004", title: "Analyste QA", company: "Quality First", href: "/Poste/detail-004" }
+        ]
+      },
+      3: {
+        label: "5 - 5 de 5 rangées",
+        rows: [
+          { id: "POST-005", title: "DevOps Engineer", company: "Ops Works", href: "/Poste/detail-005" }
+        ]
+      }
+    };
+
+    let currentPage = 1;
+
+    function renderPage(pageNumber) {
+      currentPage = pageNumber;
+      const data = pagesData[pageNumber];
+      const tbody = document.getElementById("grid1_tbody");
+      tbody.innerHTML = data.rows.map(r => `
+        <tr data-id="${r.id}">
+          <td><a href="${r.href}">Voir</a></td>
+          <td>${r.id}</td>
+          <td>${r.title}</td>
+          <td>${r.company}</td>
+          <td>Active</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("grid1_pager_label").textContent = data.label;
+
+      const pagelist = document.querySelector(".ui-iggrid-pagelist");
+      pagelist.innerHTML = Object.keys(pagesData).map(p => {
+        const num = parseInt(p, 10);
+        if (num === currentPage) {
+          return `<li class="ui-iggrid-pagecurrent ui-state-active ui-corner-all" title="page ${num}"><a class="ui-iggrid-pagelinkcurrent" href="javascript:void(0);">${num}</a></li>`;
+        } else {
+          return `<li class="ui-iggrid-page ui-state-default ui-corner-all" title="page ${num}"><a class="ui-iggrid-pagelink ui-helper-reset" href="javascript:void(0);">${num}</a></li>`;
+        }
+      }).join("");
+
+      const nextBtn = document.querySelector(".ui-iggrid-nextpage");
+      if (currentPage >= 3) {
+        nextBtn.classList.remove("ui-state-default");
+        nextBtn.classList.add("ui-state-disabled");
+      } else {
+        nextBtn.classList.remove("ui-state-disabled");
+        nextBtn.classList.add("ui-state-default");
+      }
+
+      const prevBtn = document.querySelector(".ui-iggrid-prevpage");
+      if (currentPage <= 1) {
+        prevBtn.classList.remove("ui-state-default");
+        prevBtn.classList.add("ui-state-disabled");
+      } else {
+        prevBtn.classList.remove("ui-state-disabled");
+        prevBtn.classList.add("ui-state-default");
+      }
+    }
+
+    document.querySelector(".ui-iggrid-nextpage").addEventListener("click", function(e) {
+      e.preventDefault();
+      if (this.classList.contains("ui-state-disabled")) return;
+      if (currentPage < 3) {
+        setTimeout(() => renderPage(currentPage + 1), 100);
+      }
+    });
+
+    document.querySelector(".ui-iggrid-prevpage").addEventListener("click", function(e) {
+      e.preventDefault();
+      if (this.classList.contains("ui-state-disabled")) return;
+      if (currentPage > 1) {
+        setTimeout(() => renderPage(currentPage - 1), 100);
+      }
+    });
+
+    document.querySelector(".ui-iggrid-pagelist").addEventListener("click", function(e) {
+      const link = e.target.closest("a");
+      if (!link) return;
+      const targetPage = parseInt(link.textContent.trim(), 10);
+      if (!isNaN(targetPage) && pagesData[targetPage]) {
+        setTimeout(() => renderPage(targetPage), 100);
+      }
+    });
+  </script>
+</body>
+</html>

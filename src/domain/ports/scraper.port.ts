@@ -75,6 +75,14 @@ export const ETS_SELECTORS = {
     LignesInformations: ".ligneInfo",
     BoutonPostulerDetail: "#Postuler",
   },
+  Pagination: {
+    SelecteurPager: (gridId: string) => `#${gridId}_pager`,
+    SelecteurLabel: (gridId: string) => `#${gridId}_pager_label`,
+    SelecteurPageSuivante: (gridId: string) => `#${gridId}_pager .ui-iggrid-nextpage`,
+    SelecteurPagePrecedente: (gridId: string) => `#${gridId}_pager .ui-iggrid-prevpage`,
+    SelecteurPageCourante: (gridId: string) => `#${gridId}_pager .ui-iggrid-pagecurrent`,
+    SelecteurListePages: (gridId: string) => `#${gridId}_pager .ui-iggrid-pagelist`,
+  },
 } as const;
 
 // ─── Domain value types ───────────────────────────────────────────────────────
